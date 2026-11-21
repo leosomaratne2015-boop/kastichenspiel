@@ -1,0 +1,164 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidProgress(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.currentLevel is int && data.currentLevel >= 1 && data.currentLevel <= 999 &&
+             data.highestUnlockedLevel is int && data.highestUnlockedLevel >= 1 && data.highestUnlockedLevel <= 999 &&
+             data.currentLevel <= data.highestUnlockedLevel &&
+             data.completedLevelsCount is int && data.completedLevelsCount >= 0 && data.completedLevelsCount <= 999 &&
+             data.totalStars is int && data.totalStars >= 0 && data.totalStars <= 9999 &&
+             data.totalMoves is int && data.totalMoves >= 0 && data.totalMoves <= 999999 &&
+             (!('selectedCompanionId' in data) || (data.selectedCompanionId is string && data.selectedCompanionId.size() >= 1 && data.selectedCompanionId.size() <= 64 && data.selectedCompanionId.matches('^[a-zA-Z0-9_\\-]+$'))) &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidUnlockedFigure(data, userId, figureId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.figureId is string && data.figureId == figureId && data.figureId.size() >= 1 && data.figureId.size() <= 64 && data.figureId.matches('^[a-zA-Z0-9_\\-]+$') &&
+             data.unlockedAtLevel is int && data.unlockedAtLevel >= 1 && data.unlockedAtLevel <= 999 &&
+             data.starsEarned is int && data.starsEarned >= 1 && data.starsEarned <= 3 &&
+             data.bestMoves is int && data.bestMoves >= 1 && data.bestMoves <= 999 &&
+             data.timesCompleted is int && data.timesCompleted >= 1 && data.timesCompleted <= 9999 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId}/progress/{progressId} {
+      allow get: if isOwner(userId) && isValidId(progressId) && progressId == 'main';
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(progressId) &&
+                       progressId == 'main' &&
+                       incoming().keys().hasAll([
+                         'userId',
+                         'currentLevel',
+                         'highestUnlockedLevel',
+                         'completedLevelsCount',
+                         'totalStars',
+                         'totalMoves',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId',
+                         'currentLevel',
+                         'highestUnlockedLevel',
+                         'completedLevelsCount',
+                         'totalStars',
+                         'totalMoves',
+                         'selectedCompanionId',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       isValidProgress(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(progressId) &&
+                       progressId == 'main' &&
+                       isValidProgress(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (
+                         // Action 1: Advance or update level progress after completing/selecting a level
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'currentLevel',
+                           'highestUnlockedLevel',
+                           'completedLevelsCount',
+                           'totalStars',
+                           'totalMoves',
+                           'selectedCompanionId',
+                           'updatedAt'
+                         ]) ||
+                         // Action 2: Switch current active level
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'currentLevel',
+                           'updatedAt'
+                         ]) ||
+                         // Action 3: Select favorite collectible companion
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'selectedCompanionId',
+                           'updatedAt'
+                         ])
+                       );
+
+      allow delete: if isOwner(userId) && isValidId(progressId) && progressId == 'main';
+    }
+
+    match /users/{userId}/unlockedFigures/{figureId} {
+      allow get: if isOwner(userId) && isValidId(figureId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(figureId) &&
+                       incoming().keys().hasAll([
+                         'userId',
+                         'figureId',
+                         'unlockedAtLevel',
+                         'starsEarned',
+                         'bestMoves',
+                         'timesCompleted',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId',
+                         'figureId',
+                         'unlockedAtLevel',
+                         'starsEarned',
+                         'bestMoves',
+                         'timesCompleted',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       isValidUnlockedFigure(incoming(), userId, figureId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(figureId) &&
+                       isValidUnlockedFigure(incoming(), userId, figureId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().figureId == existing().figureId &&
+                       incoming().unlockedAtLevel == existing().unlockedAtLevel &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().timesCompleted >= existing().timesCompleted &&
+                       incoming().starsEarned >= existing().starsEarned &&
+                       incoming().bestMoves <= existing().bestMoves &&
+                       // Action: Replay improvement update
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'starsEarned',
+                         'bestMoves',
+                         'timesCompleted',
+                         'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(figureId);
+    }
+  }
+}

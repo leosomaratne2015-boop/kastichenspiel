@@ -1,0 +1,6 @@
+{
+  "name": "KästchenWelt",
+  "description": "Ein buntes Kästchen-Puzzlespiel mit Level-Fortschritt und einzigartigen Sammelfiguren.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

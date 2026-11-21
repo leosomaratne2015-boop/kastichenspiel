@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">KästchenWelt</string>
+
+    <!-- Navigation -->
+    <string name="nav_play">Spielen</string>
+    <string name="nav_collection">Figuren</string>
+    <string name="nav_levels">Level</string>
+
+    <!-- Auth Screen -->
+    <string name="auth_title">Willkommen in der KästchenWelt!</string>
+    <string name="auth_subtitle">Verbinde alle Kästchen in jedem Level und schalte niedliche Sammelfiguren frei.</string>
+    <string name="auth_cloud_note">Melde dich mit Google an, damit dein aktuelles Level und deine gesamte Sammlung sicher gespeichert bleiben.</string>
+    <string name="auth_sign_in_google">Mit Google anmelden</string>
+    <string name="auth_signing_in">Anmeldung läuft…</string>
+    <string name="auth_error_config">Google-Anmeldung ist nicht konfiguriert.</string>
+    <string name="auth_error_generic">Anmeldung fehlgeschlagen. Bitte versuche es erneut.</string>
+    <string name="auth_sign_out">Abmelden</string>
+
+    <!-- Play Screen HUD & Actions -->
+    <string name="level_label">Level %1$d</string>
+    <string name="boxes_progress">%1$d / %2$d Kästchen</string>
+    <string name="moves_label">Züge: %1$d</string>
+    <string name="action_undo">Zurück</string>
+    <string name="action_reset">Neu</string>
+    <string name="action_hint">Tipp</string>
+    <string name="play_instruction">Tippe oder ziehe über angrenzende Kästchen, bis alle leuchten!</string>
+    <string name="next_reward_label">Belohnung für dieses Level</string>
+    <string name="already_unlocked_reward">Bereits in deiner Sammlung</string>
+    <string name="master_level_reward">Meister-Bonus-Level</string>
+
+    <!-- Level Complete & Unlock Celebration -->
+    <string name="level_complete_title">Level %1$d geschafft!</string>
+    <string name="figure_unlocked_headline">Neue Sammelfigur freigeschaltet!</string>
+    <string name="figure_replay_headline">Level erneut gemeistert!</string>
+    <string name="figure_unlocked_banner">Neue Sammelfigur freigeschaltet: %1$s!</string>
+    <string name="level_advanced_banner">Level %1$d geschafft! Weiter geht\'s mit Level %2$d.</string>
+    <string name="auto_advance_label">Automatisch zu Level %1$d in %2$ds…</string>
+    <string name="btn_next_level">Jetzt Level %1$d spielen</string>
+    <string name="btn_view_collection">Zur Sammlung</string>
+
+    <!-- Collection Screen -->
+    <string name="collection_title">Meine Sammelfiguren</string>
+    <string name="collection_count">%1$d von %2$d freigeschaltet</string>
+    <string name="filter_all">Alle</string>
+    <string name="filter_unlocked">Freigeschaltet</string>
+    <string name="filter_locked">Gesperrt</string>
+    <string name="figure_locked_name">Geheime Figur</string>
+    <string name="figure_locked_hint">Schaffe Level %1$d zum Freischalten</string>
+    <string name="figure_unlocked_at">Freigeschaltet in Level %1$d</string>
+    <string name="figure_best_moves">Rekord: %1$d Züge</string>
+    <string name="figure_set_companion">Als Begleiter wählen</string>
+    <string name="figure_active_companion">Aktiver Begleiter</string>
+    <string name="btn_close">Schließen</string>
+
+    <!-- Level Map Screen -->
+    <string name="levels_title">Deine Level-Reise</string>
+    <string name="levels_current_banner">Aktuelles Level: %1$d</string>
+    <string name="levels_stats_completed">Geschafft</string>
+    <string name="levels_stats_stars">Sterne</string>
+    <string name="levels_stats_figures">Figuren</string>
+    <string name="level_status_current">Aktiv</string>
+    <string name="level_status_done">Geschafft</string>
+    <string name="level_status_locked">Gesperrt</string>
+    <string name="levels_play_master">Meister-Level %1$d spielen</string>
+
+    <!-- Rarity -->
+    <string name="rarity_common">Gewöhnlich</string>
+    <string name="rarity_rare">Selten</string>
+    <string name="rarity_epic">Episch</string>
+    <string name="rarity_legendary">Legendär</string>
+
+    <!-- States & Errors -->
+    <string name="loading_progress">Lade deinen Spielstand…</string>
+    <string name="error_retry">Erneut versuchen</string>
+    <string name="error_saving_progress">Spielstand konnte nicht gespeichert werden. Bitte prüfe deine Verbindung.</string>
+</resources>

@@ -1,0 +1,124 @@
+{
+  "entities": {
+    "PlayerProgress": {
+      "title": "PlayerProgress",
+      "description": "Tracks the authenticated player's current level, highest unlocked level, total stars, moves, and favorite collectible companion.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase UID owning this progress record."
+        },
+        "currentLevel": {
+          "type": "integer",
+          "description": "The level number the player is currently playing (1-999)."
+        },
+        "highestUnlockedLevel": {
+          "type": "integer",
+          "description": "The highest level number unlocked by the player (1-999)."
+        },
+        "completedLevelsCount": {
+          "type": "integer",
+          "description": "Total count of distinct completed levels."
+        },
+        "totalStars": {
+          "type": "integer",
+          "description": "Total stars earned across completed levels."
+        },
+        "totalMoves": {
+          "type": "integer",
+          "description": "Cumulative moves made across completed levels."
+        },
+        "selectedCompanionId": {
+          "type": "string",
+          "description": "Optional ID of the unlocked collectible figure selected as the player's mascot."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() upon initial creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on every update."
+        }
+      },
+      "required": [
+        "userId",
+        "currentLevel",
+        "highestUnlockedLevel",
+        "completedLevelsCount",
+        "totalStars",
+        "totalMoves",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UnlockedFigure": {
+      "title": "UnlockedFigure",
+      "description": "Represents a collectible figure unlocked by completing a specific level, along with best performance stats.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase UID owning this collectible."
+        },
+        "figureId": {
+          "type": "string",
+          "description": "Unique identifier matching the document ID of the collectible figure."
+        },
+        "unlockedAtLevel": {
+          "type": "integer",
+          "description": "The level number that unlocked this collectible figure (1-999)."
+        },
+        "starsEarned": {
+          "type": "integer",
+          "description": "Best star rating earned for this level (1-3)."
+        },
+        "bestMoves": {
+          "type": "integer",
+          "description": "Lowest number of moves taken to solve this level (1-999)."
+        },
+        "timesCompleted": {
+          "type": "integer",
+          "description": "Number of times the player completed this level."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() when first unlocked."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() when updated."
+        }
+      },
+      "required": [
+        "userId",
+        "figureId",
+        "unlockedAtLevel",
+        "starsEarned",
+        "bestMoves",
+        "timesCompleted",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/progress/{progressId}": {
+      "schema": {
+        "$ref": "#/entities/PlayerProgress"
+      },
+      "description": "User-isolated document storing current level and overall game progress (document ID: main)."
+    },
+    "/users/{userId}/unlockedFigures/{figureId}": {
+      "schema": {
+        "$ref": "#/entities/UnlockedFigure"
+      },
+      "description": "User-isolated subcollection of unlocked collectible figures earned by completing levels."
+    }
+  }
+}
